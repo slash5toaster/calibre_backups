@@ -12,6 +12,10 @@ $ calibre_backup.sh -h
       -c clean (remove calibre files from backup location)
       -w delay time
 
+
+```
+## Usage
+```
 $ calibre_backup.sh -b /tmp/CalibreBackup -l /opt/Books/ -c -w 10
 
 ```
