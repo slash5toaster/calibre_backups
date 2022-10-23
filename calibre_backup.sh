@@ -4,9 +4,6 @@
 
 [[ $DEBUG ]] && set -x
 
-# BACKUP_FOLDER=/tmp/CalibreBackup
-# BOOK_FOLDER=/opt/Books
-
 SHASUMBIN=$(type -p sha1sum || type -p shasum )
 PAUSE_TIME=5
 
@@ -15,7 +12,6 @@ defaultHelp="  -h help "
 backupfolderHelp="  -b full path to backup location $BACKUP_FOLDER"
 cleanHelp="  -c clean (remove calibre files from backup location)"
 libraryHelp="  -l full path to library $BOOK_FOLDER"
-# verboseHelp="  -v show extra info"
 pausetimeHelp="  -w delay time"
 badOptionHelp="Option not recognised"
 #---------------------------------------------------------------
@@ -26,8 +22,9 @@ badOptionHelp="Option not recognised"
 setupPaths()
 {
    # for mac users
-   # change $CALIBRE_APP to the path of your calibre.app
+   # set $CALIBRE_APP to the path of your calibre.app
    # if you have it someplace *other* than the default location
+
    if [[ $(uname -s) == "Darwin" ]]; then
 
       if [[ -d /Applications/calibre.app ]]; then
@@ -66,7 +63,6 @@ printHelpAndExit()
   echo "${backupfolderHelp}"
   echo "${libraryHelp}"
   echo "${cleanHelp}"
-#   echo "${verboseHelp}"
   echo "${pausetimeHelp}"
   exit $1
 }
@@ -159,22 +155,19 @@ backupCalibre()
 
      delayTime "Backing up ${BOOK_FOLDER} to ${BACKUP_FOLDER}" $PAUSE_TIME
 
-#     echo "
       ${CALIBREDEBUG} \
          --export-all-calibre-data \
          ${BACKUP_FOLDER} \
          ${BOOK_FOLDER} \
       && SUCCESS=0
-#     "
      return $SUCCESS
    }
 #---------------------------------------------------------------
 
 #######################################
-while getopts "hvcb:l:w:" optionName; do
+while getopts "hcb:l:w:" optionName; do
    case "$optionName" in
       h)  printHelpAndExit 0;;
-      v)  DEBUG=0;;
       c)  CLEAN_BACKUP=0;;
       b)  BACKUP_FOLDER="$OPTARG";;
       l)  BOOK_FOLDER="$OPTARG";;
