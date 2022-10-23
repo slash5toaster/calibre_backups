@@ -182,8 +182,12 @@ if [[ $DEBUG ]]; then
   echo $PAUSE_TIME $CLEAN_BACKUP $DEBUG
 fi
 
-setupPaths
-libraryCheck && \
-prepBackupLocation && \
-backupCalibre && \
-backupManifest
+if [[ ! -z "$BACKUP_FOLDER"  ]] ; then
+   setupPaths
+   libraryCheck && \
+   prepBackupLocation && \
+   backupCalibre && \
+   backupManifest
+else
+   printHelpAndExit 0
+fi
