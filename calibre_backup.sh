@@ -95,8 +95,8 @@ delayTime ()
 libraryCheck()
 {
     # is there library there?
-    if [[ ! -e $BOOK_FOLDER/metadata.db ]]; then
-       echo $BOOK_FOLDER not a valid calibre library
+    if [[ ! -e "$BOOK_FOLDER"/metadata.db ]]; then
+       echo "$BOOK_FOLDER not a valid calibre library"
        exit 4
     else
       return 0
@@ -117,12 +117,12 @@ prepBackupLocation()
          if [[ $CLEAN_BACKUP ]]; then
             # delete all files in the backup folder
 
-            [[ -e $BACKUP_FOLDER/metadata.db ]] && \
+            [[ -e "$BACKUP_FOLDER"/metadata.db ]] && \
             echo "$BACKUP_FOLDER looks like a library folder, Exiting!!" && \
             exit 8
 
             delayTime "Deleting files in ${BACKUP_FOLDER}"
-            /bin/rm -v $BACKUP_FOLDER/*.{calibre-data,sha1} && \
+            /bin/rm -v "$BACKUP_FOLDER"/*.{calibre-data,sha1} && \
             SUCCESS=0
             unset CLEAN_BACKUP
             prepBackupLocation
@@ -138,13 +138,13 @@ prepBackupLocation()
 
 backupManifest()
    {
-      cd $BACKUP_FOLDER || exit 3
+      cd "$BACKUP_FOLDER" || exit 3
       find . -type f \
       | sort \
       | sed -e 's/\.\///' \
       | grep -v "sha1$" \
       | xargs $SHASUMBIN \
-      | tee $BACKUP_FOLDER/CalibreBackup.sha1
+      | tee "$BACKUP_FOLDER"/CalibreBackup.sha1
 
    }
 #---------------------------------------------------------------
@@ -157,8 +157,8 @@ backupCalibre()
 
       ${CALIBREDEBUG} \
          --export-all-calibre-data \
-         ${BACKUP_FOLDER} \
-         ${BOOK_FOLDER} \
+         "$BACKUP_FOLDER" \
+         "$BOOK_FOLDER" \
       && SUCCESS=0
      return $SUCCESS
    }
