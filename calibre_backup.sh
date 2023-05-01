@@ -189,5 +189,5 @@ if [[ ! -z "$BACKUP_FOLDER"  ]] ; then
    backupCalibre && \
    backupManifest
 else
-   printHelpAndExit 0
+   printHelpAndExit 2
 fi
