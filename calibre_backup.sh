@@ -122,7 +122,7 @@ prepBackupLocation()
             exit 8
 
             delayTime "Deleting files in ${BACKUP_FOLDER}"
-            /bin/rm -v "$BACKUP_FOLDER"/*.{calibre-data,sha1} .DS_Store && \
+            (find "$BACKUP_FOLDER"/*.{calibre-data,sha1} .DS_Store || rm -v )&& \
             SUCCESS=0
             unset CLEAN_BACKUP
             prepBackupLocation
