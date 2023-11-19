@@ -34,7 +34,7 @@ setupPaths()
          CALIBRE_APP=$HOME/Applications/calibre.app
       fi
 
-      if [[ ! -z $CALIBRE_APP ]]; then
+      if [[ -n $CALIBRE_APP ]]; then
          PATH=$PATH:$CALIBRE_APP/Contents/MacOS
       fi
    fi
@@ -107,25 +107,32 @@ libraryCheck()
 prepBackupLocation()
    {
       local SUCCESS=1
+      local -a FileCount
 
       [[ -e "$BACKUP_FOLDER" ]] || mkdir -vp "$BACKUP_FOLDER"
 
-      if [[ -z $(ls -A "$BACKUP_FOLDER") ]] ; then
+      mapfile -t FileCount< <(ls -A "$BACKUP_FOLDER")
+
+      [[ $DEBUG ]] && echo -e "${BACKUP_FOLDER} has ${#FileCount[@]} files,\n${FileCount[*]}"
+
+      if [[ ${#FileCount[@]} == 0  ]] ; then
          # make sure it is clean
          SUCCESS=0
       else
          if [[ $CLEAN_BACKUP ]]; then
             # delete all files in the backup folder
 
-            [[ -e "$BACKUP_FOLDER"/metadata.db ]] && \
-            echo "$BACKUP_FOLDER looks like a library folder, Exiting!!" && \
-            exit 8
+            if [[ -e "$BACKUP_FOLDER"/metadata.db ]] ; then
+               echo "$BACKUP_FOLDER looks like a library folder, Exiting!!"
+               exit 8
+            fi
 
-            delayTime "Deleting files in ${BACKUP_FOLDER}"
-            (find "$BACKUP_FOLDER"/*.{calibre-data,sha1} .DS_Store || rm -v )&& \
-            SUCCESS=0
+            delayTime "Deleting files in ${BACKUP_FOLDER}" 2
+            for file in "${FileCount[@]}"; do
+               rm -vf "${BACKUP_FOLDER}/${file:?}" || exit 5
+            done && SUCCESS=0
             unset CLEAN_BACKUP
-            prepBackupLocation
+            # prepBackupLocation
          else
             echo "Backup directory $BACKUP_FOLDER not empty - backup requires an empty folder"
             exit 2
@@ -179,10 +186,10 @@ done
 if [[ $DEBUG ]]; then
   echo "Backup folder is $BACKUP_FOLDER"
   echo "Book folder is $BOOK_FOLDER"
-  echo $PAUSE_TIME $CLEAN_BACKUP $DEBUG
+  echo "$PAUSE_TIME $CLEAN_BACKUP $DEBUG"
 fi
 
-if [[ ! -z "$BACKUP_FOLDER"  ]] ; then
+if [[ -n "$BACKUP_FOLDER"  ]] ; then
    setupPaths
    libraryCheck && \
    prepBackupLocation && \
