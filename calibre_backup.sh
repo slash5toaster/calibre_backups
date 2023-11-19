@@ -6,6 +6,7 @@
 
 SHASUMBIN=$(type -p sha1sum || type -p shasum )
 PAUSE_TIME=5
+CLEAN_BACKUP=1
 
 usageHelp="Usage: ${0##*/}"
 defaultHelp="  -h help "
@@ -119,7 +120,7 @@ prepBackupLocation()
          # make sure it is clean
          SUCCESS=0
       else
-         if [[ $CLEAN_BACKUP ]]; then
+         if [[ $CLEAN_BACKUP == 0 ]]; then
             # delete all files in the backup folder
 
             if [[ -e "$BACKUP_FOLDER"/metadata.db ]] ; then
@@ -128,11 +129,11 @@ prepBackupLocation()
             fi
 
             delayTime "Deleting files in ${BACKUP_FOLDER}" 2
+
             for file in "${FileCount[@]}"; do
                rm -vf "${BACKUP_FOLDER}/${file:?}" || exit 5
             done && SUCCESS=0
-            unset CLEAN_BACKUP
-            # prepBackupLocation
+
          else
             echo "Backup directory $BACKUP_FOLDER not empty - backup requires an empty folder"
             exit 2
@@ -186,7 +187,7 @@ done
 if [[ $DEBUG ]]; then
   echo "Backup folder is $BACKUP_FOLDER"
   echo "Book folder is $BOOK_FOLDER"
-  echo "$PAUSE_TIME $CLEAN_BACKUP $DEBUG"
+  echo "Pause time is $PAUSE_TIME, Clean is $CLEAN_BACKUP, Debug is $DEBUG"
 fi
 
 if [[ -n "$BACKUP_FOLDER"  ]] ; then
