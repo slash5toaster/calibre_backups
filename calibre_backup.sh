@@ -81,15 +81,15 @@ printErrorHelpAndExit()
 
 delayTime ()
 {
-    local TITLE=${1:-"backing up"}
-    local NUMSEC=${2:-$PAUSE_TIME}
+   local TITLE=${1:-"backing up"}
+   local NUMSEC=${2:-$PAUSE_TIME}
 
-    echo "${TITLE} in ${NUMSEC}"
-    for (( i = $NUMSEC ; i > 0; i-- )); do
+   echo "${TITLE} in ${NUMSEC}"
+   for (( i = $NUMSEC ; i > 0; i-- )); do
       echo -en "$i "
       sleep 1
-    done
-    echo
+   done
+   echo
 }
 #---------------------------------------------------------------
 
@@ -128,7 +128,7 @@ prepBackupLocation()
                exit 8
             fi
 
-            delayTime "Deleting files in ${BACKUP_FOLDER}" 2
+            delayTime "Deleting files in ${BACKUP_FOLDER}" ${PAUSE_TIME}
 
             for file in "${FileCount[@]}"; do
                rm -vf "${BACKUP_FOLDER}/${file:?}" || exit 5
@@ -188,6 +188,11 @@ if [[ $DEBUG ]]; then
   echo "Backup folder is $BACKUP_FOLDER"
   echo "Book folder is $BOOK_FOLDER"
   echo "Pause time is $PAUSE_TIME, Clean is $CLEAN_BACKUP, Debug is $DEBUG"
+fi
+
+if ! [[ $PAUSE_TIME =~ '^[0-9]+$' ]]; then
+   echo "Delay time (-w) must be an integer, you entered $PAUSE_TIME"
+   exit 3
 fi
 
 if [[ -n "$BACKUP_FOLDER"  ]] ; then
