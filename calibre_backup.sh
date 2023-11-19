@@ -190,7 +190,7 @@ if [[ $DEBUG ]]; then
   echo "Pause time is $PAUSE_TIME, Clean is $CLEAN_BACKUP, Debug is $DEBUG"
 fi
 
-if ! [[ $PAUSE_TIME =~ '^[0-9]+$' ]]; then
+if ! [[ $PAUSE_TIME =~ ^[0-9]+$ ]]; then
    echo "Delay time (-w) must be an integer, you entered $PAUSE_TIME"
    exit 3
 fi
